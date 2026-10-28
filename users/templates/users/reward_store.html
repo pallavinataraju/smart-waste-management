@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Eco Rewards Store</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f7f3;
+            margin: 0;
+            padding: 24px;
+            color: #203126;
+        }
+        .header, .balance, .reward, .history {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            margin-bottom: 18px;
+        }
+        .balance { background: #e0f2df; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+        .reward { margin: 0; }
+        button {
+            background: #237747;
+            color: white;
+            padding: 10px 14px;
+            border: 0;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        button:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+        .message { padding: 10px; background: #fff3cd; border-radius: 8px; }
+        a { color: #237747; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌱 Eco Rewards Store</h1>
+        <p>Turn your verified waste disposals into useful rewards.</p>
+        <a href="{% url 'home' %}">← Back to dashboard</a>
+    </div>
+
+    <div class="balance">
+        <h2>Your balance: {{ profile.points }} points</h2>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p class="message">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <h2>Available Rewards</h2>
+
+    <div class="grid">
+        {% for reward in rewards %}
+            <div class="reward">
+                <h3>{{ reward.name }}</h3>
+                <p>{{ reward.description }}</p>
+                <p><strong>{{ reward.points_cost }} points</strong></p>
+                <p>Available: {{ reward.stock }}</p>
+
+                <form method="post"
+                      action="{% url 'redeem_reward' reward.id %}">
+                    {% csrf_token %}
+                    <button type="submit"
+                        {% if profile.points < reward.points_cost %}
+                            disabled
+                        {% endif %}>
+                        Redeem Reward
+                    </button>
+                </form>
+            </div>
+        {% empty %}
+            <p>No rewards are available right now. Please check again later.</p>
+        {% endfor %}
+    </div>
+
+    <div class="history">
+        <h2>My Reward History</h2>
+        {% for item in redemptions %}
+            <p>
+                <strong>{{ item.reward.name }}</strong>
+                — {{ item.points_spent }} points
+                — Code: <strong>{{ item.coupon_code }}</strong>
+                — {{ item.redeemed_at|date:"d M Y, h:i A" }}
+            </p>
+        {% empty %}
+            <p>You have not redeemed any rewards yet.</p>
+        {% endfor %}
+    </div>
+</body>
+</html>

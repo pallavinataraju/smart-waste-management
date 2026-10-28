@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Bin Fill Level</title>
+</head>
+
+<body>
+
+    <h1>Bin Monitoring</h1>
+
+    <h2>{{ message }}</h2>
+
+    {% if bin %}
+
+        <p>
+            Bin ID: {{ bin.bin_id }}
+        </p>
+
+        <p>
+            Current Fill Level:
+            {{ bin.fill_level }}%
+        </p>
+
+    {% endif %}
+
+</body>
+
+</html>

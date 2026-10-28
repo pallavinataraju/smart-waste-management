@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Smart Waste Management</title>
+</head>
+
+<body>
+
+    <h1>Smart Waste Management</h1>
+
+    <h2>Welcome, {{ request.user.username }}</h2>
+
+    <hr>
+
+    <h2>Your Reward Points</h2>
+
+    <h1>{{ profile.points }} Points</h1>
+
+    <hr>
+
+    <h2>Disposal History</h2>
+
+    {% if disposals %}
+
+    <table border="1" cellpadding="10">
+
+        <tr>
+            <th>Bin</th>
+            <th>Selected Waste</th>
+            <th>Sensor Result</th>
+            <th>Status</th>
+            <th>Points</th>
+            <th>Date</th>
+        </tr>
+
+        {% for disposal in disposals %}
+
+        <tr>
+
+            <td>
+                {{ disposal.bin.bin_id }}
+            </td>
+
+            <td>
+                {{ disposal.get_selected_waste_display }}
+            </td>
+
+            <td>
+                {% if disposal.sensor_result %}
+                    {{ disposal.sensor_result }}
+                {% else %}
+                    Waiting
+                {% endif %}
+            </td>
+
+            <td>
+                {% if disposal.is_verified %}
+                    Verified
+                {% elif disposal.sensor_result %}
+                    Rejected
+                {% else %}
+                    Waiting
+                {% endif %}
+            </td>
+
+            <td>
+                {{ disposal.points_awarded }}
+            </td>
+
+            <td>
+                {{ disposal.created_at }}
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+    {% else %}
+
+    <p>No disposal records yet.</p>
+
+    {% endif %}
+
+    <hr>
+<a href="{% url 'reward_store' %}">🎁 Open Reward Store</a>
+    <a href="/bin/bin001/">
+        <button>Dispose Waste at BIN001</button>
+    </a>
+
+</body>
+
+</html>

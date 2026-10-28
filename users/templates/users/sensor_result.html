@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sensor Verification</title>
+</head>
+
+<body>
+
+    <h1>Waste Verification</h1>
+
+    <h2>{{ message }}</h2>
+
+    {% if disposal %}
+
+        <p>
+            Selected Waste:
+            {{ disposal.get_selected_waste_display }}
+        </p>
+
+        <p>
+            Sensor Result:
+            {{ disposal.sensor_result }}
+        </p>
+
+        <p>
+            Verified:
+            {{ disposal.is_verified }}
+        </p>
+
+        <p>
+            Points Awarded:
+            {{ disposal.points_awarded }}
+        </p>
+
+    {% endif %}
+
+</body>
+
+</html>

@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Waste Management</title>
+</head>
+
+<body>
+    <h1>Smart Waste Management</h1>
+
+    <h2>Select Your Waste Bin</h2>
+
+    {% for b in all_bins %}
+        <hr>
+
+        <h3>{{ b.name }}</h3>
+
+        <p>Bin ID: {{ b.bin_id }}</p>
+        <p>Location: {{ b.location }}</p>
+        <p>Current Fill Level: {{ b.fill_level }}%</p>
+
+        <h4>Dispose Waste</h4>
+
+        {% if b.bin_id == "bin001" %}
+            <a href="{% url 'select_waste' b.bin_id 'wet' %}">
+                <button type="button">Dispose Wet Waste</button>
+            </a>
+
+        {% elif b.bin_id == "bin002" %}
+            <a href="{% url 'select_waste' b.bin_id 'dry' %}">
+                <button type="button">Dispose Dry Waste</button>
+            </a>
+
+        {% else %}
+            <p>Waste disposal is not configured for this bin.</p>
+        {% endif %}
+
+    {% empty %}
+        <p>No bins are available.</p>
+    {% endfor %}
+
+    <hr>
+
+</body>
+</html>

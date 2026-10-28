@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Collector Dashboard</title>
+</head>
+
+<body>
+
+    <h1>🚛 Collection Dashboard</h1>
+
+    {% if alerts %}
+
+        {% for alert in alerts %}
+
+            <hr>
+
+            <h2>⚠️ Collection Required</h2>
+
+            <p>
+                <strong>Bin ID:</strong>
+                {{ alert.bin.bin_id }}
+            </p>
+
+            <p>
+                <strong>Location:</strong>
+                {{ alert.bin.location }}
+            </p>
+
+            <p>
+                <strong>Fill Level:</strong>
+                {{ alert.fill_level }}%
+            </p>
+
+            <p>
+                <strong>Alert Time:</strong>
+                {{ alert.created_at }}
+            </p>
+            <form
+    method="POST"
+    action="{% url 'mark_collected' alert.id %}"
+>
+    {% csrf_token %}
+
+    <button type="submit">
+        Mark as Collected
+    </button>
+</form>
+
+        {% endfor %}
+
+    {% else %}
+
+        <h2>✅ No collection required</h2>
+
+        <p>All bins are currently under the collection threshold.</p>
+
+    {% endif %}
+
+</body>
+
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Register - Smart Waste</title>
+</head>
+
+<body>
+
+    <h1>Smart Waste Management</h1>
+
+    <h2>Create Account</h2>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">
+            Register
+        </button>
+
+    </form>
+
+</body>
+
+</html>

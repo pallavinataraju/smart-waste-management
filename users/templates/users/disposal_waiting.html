@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Waste Disposal</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 650px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f8f5;
+            color: #222;
+        }
+
+        .card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px #00000012;
+        }
+
+        .points {
+            color: #18864b;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .status {
+            padding: 12px;
+            background: #fff3cd;
+            border-radius: 8px;
+        }
+
+        .success {
+            background: #e1f5e8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h1>Smart Waste Management</h1>
+
+        <h2>{{ bin.name }}</h2>
+
+        <p>
+            <strong>Selected Waste:</strong>
+            {{ disposal.get_selected_waste_display }}
+        </p>
+
+        <p>
+            <strong>Disposal ID:</strong>
+            {{ disposal.id }}
+        </p>
+
+        <hr>
+
+        <div id="status-box" class="status">
+            {% if disposal.is_verified %}
+                <h3>Disposal Verified!</h3>
+                <p>Your waste disposal has been confirmed.</p>
+            {% else %}
+                <h3>Waiting for Sensor Confirmation...</h3>
+                <p>Please dispose of your waste now.</p>
+            {% endif %}
+        </div>
+
+        <h2>Reward Points Earned</h2>
+
+        <p class="points" id="earned-points">
+            {{ disposal.points_awarded|default:0 }} Points
+        </p>
+
+        <h3>Total Reward Balance</h3>
+        <p id="total-points">
+            Loading points...
+        </p>
+
+        <p>
+            <strong>Sensor Result:</strong>
+            <span id="sensor-result">
+                {% if disposal.is_verified %}
+                    {{ disposal.sensor_result|upper }}
+                {% else %}
+                    Waiting
+                {% endif %}
+            </span>
+        </p>
+    </div>
+
+    <script>
+        const statusUrl = "{% url 'disposal_status' disposal.id %}";
+        const statusBox = document.getElementById("status-box");
+        const earnedPoints = document.getElementById("earned-points");
+        const totalPoints = document.getElementById("total-points");
+        const sensorResult = document.getElementById("sensor-result");
+
+        let polling = true;
+
+        async function checkDisposalStatus() {
+            if (!polling) return;
+
+            try {
+                const response = await fetch(statusUrl, {
+                    method: "GET",
+                    headers: { "X-Requested-With": "XMLHttpRequest" },
+                    cache: "no-store"
+                });
+
+                if (!response.ok) {
+                    totalPoints.textContent =
+                        "Unable to load points. Refresh the page.";
+                    return;
+                }
+
+                const data = await response.json();
+
+                earnedPoints.textContent =
+                    data.points_awarded + " Points";
+
+                totalPoints.textContent =
+                    data.total_points + " Points";
+
+                sensorResult.textContent =
+                    data.sensor_result || "Waiting";
+
+                if (data.is_verified) {
+                    statusBox.className = "status success";
+                    statusBox.innerHTML =
+                        "<h3>Disposal Verified!</h3>" +
+                        "<p>Your waste disposal has been confirmed. " +
+                        "Reward points have been added.</p>";
+
+                    polling = false;
+                } else {
+                    statusBox.innerHTML =
+                        "<h3>Waiting for Sensor Confirmation...</h3>" +
+                        "<p>Please dispose of your waste now.</p>";
+                }
+
+            } catch (error) {
+                console.error("Could not check disposal status:", error);
+            }
+        }
+
+        checkDisposalStatus();
+
+        const pollTimer = setInterval(() => {
+            if (!polling) {
+                clearInterval(pollTimer);
+                return;
+            }
+
+            checkDisposalStatus();
+        }, 2000);
+    </script>
+</body>
+</html>

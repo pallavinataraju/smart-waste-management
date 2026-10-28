@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Login - Smart Waste</title>
+</head>
+
+<body>
+
+    <h1>Smart Waste Management</h1>
+
+    <h2>Login</h2>
+
+    {% if error %}
+        <p>{{ error }}</p>
+    {% endif %}
+
+    <form method="POST">
+
+        {% csrf_token %}
+        <input
+    type="hidden"
+    name="next"
+    value="{{ request.GET.next }}"
+>
+
+        <p>
+            <label>Username:</label>
+            <input
+                type="text"
+                name="username"
+                required
+            >
+        </p>
+
+        <p>
+            <label>Password:</label>
+            <input
+                type="password"
+                name="password"
+                required
+            >
+        </p>
+
+        <button type="submit">
+            Login
+        </button>
+
+    </form>
+
+    <p>
+        New user?
+        <a href="/register/">Register here</a>
+    </p>
+
+</body>
+
+</html>
